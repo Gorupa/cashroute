@@ -1,6 +1,6 @@
 # CashRoute
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-CashRoute-1a73e8?style=for-the-badge&logo=cloudflare&logoColor=white)](https://cashroute.pages.dev)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-CashRoute-1a73e8?style=for-the-badge&logo=cloudflare&logoColor=white)](https://cashroute-deh.pages.dev)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-yellow?style=for-the-badge)](LICENSE)
 [![Built by gorupa](https://img.shields.io/badge/Built%20by-gorupa-34a853?style=for-the-badge&logo=github)](https://github.com/gorupa)
 [![No Data Stored](https://img.shields.io/badge/No%20Data-Stored-10b981?style=for-the-badge)](https://github.com/gorupa/cashroute)
