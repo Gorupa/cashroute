@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashRoute — Wallet to Bank Transfer</title>
+    <meta name="description" content="Transfer money from your digital wallet to your bank account. Secure, fast, and simple.">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root {
+            --md-primary:         #1a73e8;
+            --md-primary-dark:    #1557b0;
+            --md-surface:         #ffffff;
+            --md-background:      #f8f9fa;
+            --md-on-surface:      #202124;
+            --md-on-surface-var:  #5f6368;
+            --md-outline:         #dadce0;
+            --md-success:         #1e8e3e;
+            --md-elevation-1:     0 1px 2px rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--md-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── Top App Bar ── */
+        .app-bar {
+            width: 100%;
+            background: var(--md-surface);
+            box-shadow: var(--md-elevation-1);
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-mark {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .brand-mark .material-icons-round { font-size: 20px; color: white; }
+        .brand-name {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--md-on-surface);
+            letter-spacing: -0.3px;
+            flex: 1;
+        }
+        .brand-name span { color: var(--md-primary); }
+        .app-bar-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* ── Content ── */
+        .content {
+            width: 100%;
+            max-width: 600px;
+            padding: 24px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeUp 0.4s ease both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Hero Banner ── */
+        .hero-banner {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            border-radius: 16px;
+            padding: 22px 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(26,115,232,0.35);
+        }
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px; right: -30px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -60px; left: -20px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+        .hero-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .hero-icon .material-icons-round { font-size: 22px; color: white; }
+        .hero-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+        .hero-subtitle { font-size: 0.78rem; opacity: 0.8; margin-top: 2px; }
+        .hero-steps {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-step {
+            flex: 1;
+            background: rgba(255,255,255,0.13);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 10px 6px;
+            text-align: center;
+            font-size: 0.71rem;
+            line-height: 1.4;
+        }
+        .hero-step .material-icons-round { font-size: 17px; display: block; margin: 0 auto 3px; opacity: 0.9; }
+        .step-arrow { color: rgba(255,255,255,0.45); display: flex; align-items: center; }
+        .step-arrow .material-icons-round { font-size: 16px; }
+
+        /* ── Section Header ── */
+        .section-header {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--md-on-surface-var);
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .section-header .material-icons-round { font-size: 16px; color: var(--md-primary); }
+
+        /* ── Wallet List ── */
+        .wallet-card {
+            background: var(--md-surface);
+            border-radius: 16px;
+            box-shadow: var(--md-elevation-1);
+            overflow: hidden;
+        }
+        .wallet-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid var(--md-outline);
+            position: relative;
+        }
+        .wallet-item:last-child { border-bottom: none; }
+        .wallet-item:hover { background: #f8f9fa; }
+        .wallet-item.selected { background: #e8f0fe; }
+        .wallet-item:active { background: #d2e3fc; }
+
+        .wallet-logo {
+            width: 46px; height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.63rem;
+            flex-shrink: 0;
+            font-weight: 700;
+            font-family: 'Google Sans', sans-serif;
+            line-height: 1.25;
+            text-align: center;
+        }
+        .logo-paytm    { background: #002970; color: #00baf2; }
+        .logo-phonepe  { background: #5f259f; color: white; }
+        .logo-amazon   { background: #232f3e; color: #ff9900; }
+        .logo-mobikwik { background: #21409a; color: white; }
+        .logo-jiomoney { background: #003087; color: #e63329; }
+
+        .wallet-info { flex: 1; min-width: 0; }
+        .wallet-name {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--md-on-surface);
+            margin-bottom: 1px;
+        }
+        .wallet-sub { font-size: 0.78rem; color: var(--md-on-surface-var); }
+
+        .wallet-radio {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--md-outline);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .wallet-item.selected .wallet-radio { border-color: var(--md-primary); background: var(--md-primary); }
+        .wallet-radio::after {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: white;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .wallet-item.selected .wallet-radio::after { opacity: 1; transform: scale(1); }
+
+        /* ── Connect Panel ── */
+        .connect-panel {
+            background: var(--md-surface);
+            border-radius: 16px;
+            box-shadow: var(--md-elevation-1);
+            padding: 20px;
+            display: none;
+        }
+        .connect-panel.visible {
+            display: block;
+            animation: slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .connect-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--md-outline);
+        }
+        .connect-logo {
+            width: 50px; height: 50px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.63rem;
+            font-weight: 700;
+            font-family: 'Google Sans', sans-serif;
+            line-height: 1.25;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .connect-wallet-name {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--md-on-surface);
+            margin-bottom: 2px;
+        }
+        .connect-wallet-desc { font-size: 0.8rem; color: var(--md-on-surface-var); }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        .info-row:last-of-type { border-bottom: none; }
+        .info-row .material-icons-round { font-size: 18px; color: var(--md-primary); flex-shrink: 0; margin-top: 1px; }
+        .info-row-text { font-size: 0.83rem; color: var(--md-on-surface-var); line-height: 1.45; }
+        .info-row-text strong { color: var(--md-on-surface); font-weight: 500; }
+
+        .security-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 11px 14px;
+            background: #e6f4ea;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            color: #1e8e3e;
+            font-weight: 500;
+            margin-top: 14px;
+            line-height: 1.45;
+        }
+        .security-note .material-icons-round { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+        /* ── Buttons ── */
+        .btn-connect {
+            width: 100%;
+            height: 52px;
+            background: var(--md-primary);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.975rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(26,115,232,0.4);
+            margin-top: 18px;
+        }
+        .btn-connect:hover { background: var(--md-primary-dark); box-shadow: 0 4px 16px rgba(26,115,232,0.45); transform: translateY(-1px); }
+        .btn-connect:active { transform: translateY(0); }
+        .btn-connect .material-icons-round { font-size: 20px; }
+
+        .btn-secondary {
+            width: 100%;
+            height: 44px;
+            background: transparent;
+            color: var(--md-primary);
+            border: 1px solid var(--md-outline);
+            border-radius: 100px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s;
+            margin-top: 10px;
+        }
+        .btn-secondary:hover { background: #e8f0fe; border-color: #93c5fd; }
+
+        /* ── No Selection ── */
+        .no-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 28px 20px;
+            background: var(--md-surface);
+            border-radius: 16px;
+            box-shadow: var(--md-elevation-1);
+            text-align: center;
+            color: var(--md-on-surface-var);
+        }
+        .no-selection .material-icons-round { font-size: 34px; color: var(--md-outline); }
+        .no-selection p { font-size: 0.85rem; }
+
+        /* ── Footer ── */
+        .footer {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px 16px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-logo-mark {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-logo-mark .material-icons-round { font-size: 16px; color: white; }
+        .footer-brand-name {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--md-on-surface);
+        }
+        .footer-brand-name span { color: var(--md-primary); }
+
+        .footer-divider { width: 40px; height: 1px; background: var(--md-outline); }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--md-on-surface-var);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .footer-links a {
+            color: var(--md-primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            transition: opacity 0.15s;
+        }
+        .footer-links a:hover { opacity: 0.7; }
+        .footer-sep { opacity: 0.4; }
+
+        .footer-copy {
+            font-size: 0.73rem;
+            color: var(--md-on-surface-var);
+            text-align: center;
+            line-height: 1.6;
+            opacity: 0.72;
+        }
+
+        @media (max-width: 480px) {
+            .app-bar { padding: 0 10px; }
+            .content { padding: 16px 12px 12px; gap: 16px; }
+            .wallet-item { padding: 13px 16px; }
+            .hero-steps { gap: 4px; }
+            .hero-step { padding: 8px 5px; font-size: 0.67rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="brand-mark">
+            <span class="material-icons-round">route</span>
+        </div>
+        <div class="brand-name">Cash<span>Route</span></div>
+        <div class="app-bar-avatar">G</div>
+    </div>
+
+    <div class="content">
+
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div class="hero-top">
+                <div class="hero-icon">
+                    <span class="material-icons-round">account_balance_wallet</span>
+                </div>
+                <div>
+                    <div class="hero-title">Wallet to Bank Transfer</div>
+                    <div class="hero-subtitle">Securely move money from any wallet to your bank account</div>
+                </div>
+            </div>
+            <div class="hero-steps">
+                <div class="hero-step">
+                    <span class="material-icons-round">touch_app</span>
+                    Select wallet
+                </div>
+                <div class="step-arrow"><span class="material-icons-round">chevron_right</span></div>
+                <div class="hero-step">
+                    <span class="material-icons-round">open_in_new</span>
+                    Go to gateway
+                </div>
+                <div class="step-arrow"><span class="material-icons-round">chevron_right</span></div>
+                <div class="hero-step">
+                    <span class="material-icons-round">account_balance</span>
+                    Bank credited
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Label -->
+        <div class="section-header">
+            <span class="material-icons-round">account_balance_wallet</span>
+            Choose your wallet
+        </div>
+
+        <!-- Wallet List -->
+        <div class="wallet-card">
+            <div class="wallet-item" data-wallet="paytm" onclick="selectWallet(this)">
+                <div class="wallet-radio"></div>
+                <div class="wallet-logo logo-paytm">PAY<br>TM</div>
+                <div class="wallet-info">
+                    <div class="wallet-name">Paytm</div>
+                    <div class="wallet-sub">Paytm Payments Bank</div>
+                </div>
+            </div>
+            <div class="wallet-item" data-wallet="phonepe" onclick="selectWallet(this)">
+                <div class="wallet-radio"></div>
+                <div class="wallet-logo logo-phonepe">Ph<br>Pe</div>
+                <div class="wallet-info">
+                    <div class="wallet-name">PhonePe</div>
+                    <div class="wallet-sub">PhonePe Wallet</div>
+                </div>
+            </div>
+            <div class="wallet-item" data-wallet="amazon" onclick="selectWallet(this)">
+                <div class="wallet-radio"></div>
+                <div class="wallet-logo logo-amazon">a<br>Pay</div>
+                <div class="wallet-info">
+                    <div class="wallet-name">Amazon Pay</div>
+                    <div class="wallet-sub">Amazon Pay Wallet</div>
+                </div>
+            </div>
+            <div class="wallet-item" data-wallet="mobikwik" onclick="selectWallet(this)">
+                <div class="wallet-radio"></div>
+                <div class="wallet-logo logo-mobikwik">MBK</div>
+                <div class="wallet-info">
+                    <div class="wallet-name">Mobikwik</div>
+                    <div class="wallet-sub">Mobikwik ZIP</div>
+                </div>
+            </div>
+            <div class="wallet-item" data-wallet="jiomoney" onclick="selectWallet(this)">
+                <div class="wallet-radio"></div>
+                <div class="wallet-logo logo-jiomoney">JIO</div>
+                <div class="wallet-info">
+                    <div class="wallet-name">Jio Money</div>
+                    <div class="wallet-sub">Reliance Jio Wallet</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Selection Placeholder -->
+        <div class="no-selection" id="noSelection">
+            <span class="material-icons-round">touch_app</span>
+            <p>Select a wallet above to continue</p>
+        </div>
+
+        <!-- Connect Panel -->
+        <div class="connect-panel" id="connectPanel">
+            <div class="connect-header">
+                <div class="connect-logo" id="connectLogo"></div>
+                <div>
+                    <div class="connect-wallet-name" id="connectName"></div>
+                    <div class="connect-wallet-desc" id="connectDesc"></div>
+                </div>
+            </div>
+            <div class="info-row">
+                <span class="material-icons-round">open_in_new</span>
+                <div class="info-row-text">You'll be redirected to <strong id="connectGateway"></strong> to complete your transfer. All bank details are entered directly on their secure page.</div>
+            </div>
+            <div class="info-row">
+                <span class="material-icons-round">schedule</span>
+                <div class="info-row-text">Transfers are usually credited within <strong>1–2 business days</strong></div>
+            </div>
+            <div class="info-row">
+                <span class="material-icons-round">info_outline</span>
+                <div class="info-row-text">CashRoute only facilitates the redirect. All payment processing and transaction handling is done entirely by the wallet's gateway.</div>
+            </div>
+
+            <div class="security-note">
+                <span class="material-icons-round">verified_user</span>
+                CashRoute never sees or stores your bank details, wallet credentials, or transaction data.
+            </div>
+
+            <button class="btn-connect" onclick="goToGateway()">
+                <span class="material-icons-round">open_in_new</span>
+                Continue to <span id="connectBtnLabel" style="margin-left:4px"></span>
+            </button>
+            <button class="btn-secondary" onclick="clearSelection()">
+                <span class="material-icons-round">arrow_back</span>
+                Choose a different wallet
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-brand">
+            <div class="footer-logo-mark">
+                <span class="material-icons-round">route</span>
+            </div>
+            <div class="footer-brand-name">Cash<span>Route</span></div>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-links">
+            <a href="https://github.com/gorupa" target="_blank" rel="noopener">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                gorupa
+            </a>
+            <span class="footer-sep">·</span>
+            Gaurav Kalal
+            <span class="footer-sep">·</span>
+            <a href="https://gorupa.github.io" target="_blank" rel="noopener">gorupa.github.io</a>
+        </div>
+        <div class="footer-copy">
+            © 2026 CashRoute · Built by gorupa / Gaurav Kalal<br>
+            CashRoute is a redirection interface only and is not a payment processor or financial institution.
+        </div>
+    </footer>
+
+<script>
+    const wallets = {
+        paytm:    { name: 'Paytm',       desc: 'Paytm Payments Bank',    gateway: 'Paytm Gateway',        url: 'https://paytm.com',        logoClass: 'logo-paytm',    logoHTML: 'PAY<br>TM' },
+        phonepe:  { name: 'PhonePe',     desc: 'PhonePe Wallet',         gateway: 'PhonePe Gateway',      url: 'https://phonepe.com',      logoClass: 'logo-phonepe',  logoHTML: 'Ph<br>Pe'  },
+        amazon:   { name: 'Amazon Pay',  desc: 'Amazon Pay Wallet',      gateway: 'Amazon Pay Gateway',   url: 'https://pay.amazon.in',    logoClass: 'logo-amazon',   logoHTML: 'a<br>Pay'  },
+        mobikwik: { name: 'Mobikwik',    desc: 'Mobikwik ZIP',           gateway: 'Mobikwik Gateway',     url: 'https://mobikwik.com',     logoClass: 'logo-mobikwik', logoHTML: 'MBK'       },
+        jiomoney: { name: 'Jio Money',   desc: 'Reliance Jio Wallet',    gateway: 'Jio Money Gateway',    url: 'https://jiomoney.com',     logoClass: 'logo-jiomoney', logoHTML: 'JIO'       },
+    };
+
+    let selectedWallet = null;
+
+    function selectWallet(el) {
+        document.querySelectorAll('.wallet-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedWallet = el.dataset.wallet;
+        const w = wallets[selectedWallet];
+
+        const logo = document.getElementById('connectLogo');
+        logo.className = 'connect-logo ' + w.logoClass;
+        logo.innerHTML = w.logoHTML;
+        document.getElementById('connectName').textContent     = w.name;
+        document.getElementById('connectDesc').textContent     = w.desc;
+        document.getElementById('connectGateway').textContent  = w.gateway;
+        document.getElementById('connectBtnLabel').textContent = w.name;
+
+        const panel = document.getElementById('connectPanel');
+        panel.classList.remove('visible');
+        void panel.offsetWidth;
+        panel.classList.add('visible');
+        document.getElementById('noSelection').style.display = 'none';
+
+        setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
+
+    function clearSelection() {
+        document.querySelectorAll('.wallet-item').forEach(i => i.classList.remove('selected'));
+        selectedWallet = null;
+        document.getElementById('connectPanel').classList.remove('visible');
+        document.getElementById('noSelection').style.display = 'flex';
+    }
+
+    function goToGateway() {
+        if (!selectedWallet) return;
+        // Replace each wallet's `url` with your actual payment gateway URL
+        window.open(wallets[selectedWallet].url, '_blank', 'noopener');
+    }
+</script>
+</body>
+</html>
